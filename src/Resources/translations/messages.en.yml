@@ -1,0 +1,9 @@
+czende:
+    balikonos:
+        environment: Environment
+        sandbox: Test environment
+        production: Production environment
+        collection_place_code: Collection place code
+        client_id: Client ID
+        client_secret: Client secret
+        refresh_token: Refresh token

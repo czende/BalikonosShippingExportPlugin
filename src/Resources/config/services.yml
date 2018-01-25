@@ -1,0 +1,19 @@
+parameters:
+    czende.balikonos_sandbox: https://test.balikonos.cz
+    czende.balikonos_production: https://balikonos.cz
+
+services:
+    czende.balikonos_shipping_export_plugin.form.type.balikonos_shipping_gateway:
+        class: Czende\BalikonosShippingExportPlugin\Form\Type\ShippingGatewayType
+        tags:
+            - { name: bitbag.shipping_gateway_configuration_type, type: "balikonos", label: "Balíkonoš" }
+
+    czende.balikonos_shipping_export_plugin.event_listener.balikonos_shipping_gateway:
+        class: Czende\BalikonosShippingExportPlugin\EventListener\ShippingExportEventListener
+        arguments:
+            - '@czende.balikonos_shipping_export_plugin.api_client'
+        tags:
+            - { name: kernel.event_listener, event: 'bitbag.export_shipment', method: exportShipment }
+
+    czende.balikonos_shipping_export_plugin.api_client:
+        class: Czende\BalikonosShippingExportPlugin\Api\Client

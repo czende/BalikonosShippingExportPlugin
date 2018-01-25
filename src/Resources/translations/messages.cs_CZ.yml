@@ -1,0 +1,9 @@
+czende:
+    balikonos:
+        environment: Prostředí
+        sandbox: Testovací prostředí
+        production: Produkční prostředí
+        collection_place_code: Kód sběrného místa
+        client_id: Klientské ID
+        client_secret: Klientský tajný klíč
+        refresh_token: Refresh token
