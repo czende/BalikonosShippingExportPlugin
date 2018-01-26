@@ -7,6 +7,7 @@ namespace Czende\BalikonosShippingExportPlugin\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -40,7 +41,7 @@ final class ShippingGatewayType extends AbstractType
                 'label' => 'czende.balikonos.client_id',
                 'required' => true
             ])
-            ->add('client_secret', TextType::class, [
+            ->add('client_secret', PasswordType::class, [
                 'label' => 'czende.balikonos.client_secret',
                 'required' => true
             ])
