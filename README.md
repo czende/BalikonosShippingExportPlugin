@@ -16,6 +16,7 @@ I recommend you to read [official documentation](https://balikonos.cz/doc-api/)
 
 ```bash
 $ composer require czende/balikonos-shipping-export-plugin
+$ composer require bitbag/shipping-export-plugin:dev-master
 
 ```
     
@@ -27,11 +28,24 @@ public function registerBundles()
     return array_merge(parent::registerBundles(), [
         ...
 
+        new \BitBag\ShippingExportPlugin\ShippingExportPlugin(),
         new \Czende\BalikonosShippingExportPlugin\BalikonosShippingExportPlugin(),
     ]);
 }
 ```
+Add to app/config/config.yml:
+```
+imports:
+    ...
 
+    - { resource: "@ShippingExportPlugin/Resources/config/config.yml" }
+```
+Add to app/config/routing.yml
+```
+bitbag_shipping_export_plugin:
+    resource: "@ShippingExportPlugin/Resources/config/routing.yml"
+    prefix: /admin
+```
 ## Contribution
 
 Learn more about our contribution workflow on http://docs.sylius.org/en/latest/contributing/
