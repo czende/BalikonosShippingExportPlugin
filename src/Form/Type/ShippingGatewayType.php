@@ -20,7 +20,7 @@ final class ShippingGatewayType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('external_shipment_code', ChoiceType::class, [
+            ->add('external_shipment_code', TextType::class, [
                 'label' => 'czende.balikonos.external_shipment_code',
                 'required' => true
             ])
