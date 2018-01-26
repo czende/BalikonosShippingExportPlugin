@@ -39,11 +39,15 @@ imports:
 
     - { resource: "@ShippingExportPlugin/Resources/config/config.yml" }
 ```
-Add to app/config/routing.yml
+Add to app/config/routing.yml:
 ```
 bitbag_shipping_export_plugin:
     resource: "@ShippingExportPlugin/Resources/config/routing.yml"
     prefix: /admin
+```
+Update database:
+```bash
+$ bin/console doctrine:schema:update --force
 ```
 ## Contribution
 
