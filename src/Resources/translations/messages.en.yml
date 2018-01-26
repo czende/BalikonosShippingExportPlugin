@@ -1,5 +1,6 @@
 czende:
     balikonos:
+        external_shipment_code: External shipment code
         environment: Environment
         sandbox: Test environment
         production: Production environment
