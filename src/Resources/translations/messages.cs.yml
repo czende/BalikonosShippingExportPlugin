@@ -4,7 +4,7 @@ czende:
         environment: Prostředí
         sandbox: Testovací prostředí
         production: Produkční prostředí
-        collection_place_code: Kód sběrného místa
+        collection_place_code: Identifikátor svozového místa
         client_id: Klientské ID
         client_secret: Klientské heslo
         refresh_token: Refresh token
