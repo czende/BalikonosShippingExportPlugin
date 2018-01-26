@@ -15,9 +15,8 @@ I recommend you to read [official documentation](https://balikonos.cz/doc-api/)
 ## Installation
 
 ```bash
-$ composer require czende/balikonos-shipping-export-plugin
 $ composer require bitbag/shipping-export-plugin:dev-master
-
+$ composer require czende/balikonos-shipping-export-plugin
 ```
     
 Add plugin dependencies to your AppKernel.php file:
