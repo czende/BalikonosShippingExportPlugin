@@ -10,26 +10,24 @@ use BitBag\ShippingExportPlugin\Event\ExportShipmentEvent;
 /**
  * @author Jan Czernin <jan.czernin@gmail.com>
  */
-final class ShippingExportEventListener
-{
-    /** @var ClientInterface */
-    private $Client;
+final class ShippingExportEventListener {
 
+    /** @var ClientInterface */
+    private $client;
 
     /**
      * @param ClientInterface $client
      */
-    public function __construct(ClientInterface $client)
-    {
+    public function __construct(ClientInterface $client) {
         $this->client = $client;
     }
 
 
     /**
      * @param ExportShipmentEvent $exportShipmentEvent
+     * @throws \Exception
      */
-    public function exportShipment(ExportShipmentEvent $exportShipmentEvent): void
-    {
+    public function exportShipment(ExportShipmentEvent $exportShipmentEvent): void {
         $shippingExport = $exportShipmentEvent->getShippingExport();
         $shippingGateway = $shippingExport->getShippingGateway();
 
@@ -37,14 +35,24 @@ final class ShippingExportEventListener
             return;
         }
 
-        if (false) {
-            $event->addErrorFlash(); // Add an error notification
+        $this->client->setShippingGateway($shippingGateway);
+        $this->client->setShipment($shippingExport->getShipment());
+
+        try {
+            $this->client->sendDelivery();
+            // $shippingLabel = $this->client->getShippingLabel();
+        } catch (\Exception $exception) {
+            $exportShipmentEvent->addErrorFlash(sprintf(
+                "Balikonos service for #%s order: %s",
+                $shippingExport->getShipment()->getOrder()->getNumber(),
+                $exception->getMessage()));
 
             return;
         }
 
-        $event->addSuccessFlash(); // Add success notification
-        $event->saveShippingLabel("Some label content received from external API", 'pdf'); // Save label
-        $event->exportShipment(); // Mark shipment as "Exported"
+        // $labelContent = base64_decode($shippingLabel->contents);
+        // $exportShipmentEvent->saveShippingLabel($labelContent, 'pdf'); // NEBO ZPL
+        $exportShipmentEvent->addSuccessFlash();
+        $exportShipmentEvent->exportShipment();
     }
 }
