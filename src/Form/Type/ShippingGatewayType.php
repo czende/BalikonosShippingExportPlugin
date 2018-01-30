@@ -21,15 +21,18 @@ final class ShippingGatewayType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('external_shipment_code', ChoiceType::class, [
+            ->add('external_shipment', ChoiceType::class, [
                 'label' => 'czende.balikonos.external_shipment_service',
                 'required' => true,
                 'choices' => [
-                     'GLS General Logistics Systems, s.r.o.' => 'GLS',
-                     'Česká pošta, s.p.' => 'ČP',
-                     'IN TIME SPEDICE, spol. s.r.o.' => 'IT',
-                     'PPL - Professional Parcel Logistic s.r.o.' => 'PPL',
-                     'Mediaservis, s.r.o.' => 'MS'
+                     'GLS Business-Parcel' => 'GLS-BP',
+                     'IT Home Delivery' => 'IT-HD',
+                     'ČP Doporučený balíček' => 'ČP-BA',
+                     'PPL Parcel Connect' => 'PPL-EB',
+                     'PPL Parcel CZ Business' => 'PPL-FB',
+                     'PPL Parcel CZ Private' => 'PPL-SB',
+                     'IT Poštomaty' => 'IT-PM',
+                     'IT Home Delivery' => 'IT-HD'
                 ]
             ])
             ->add('environment', ChoiceType::class, [

@@ -68,50 +68,6 @@ final class BalikonosClient implements BalikonosClientInterface
         $client->post(self::API_ENDPOINT . 'deliveries', ['headers' => $requestHeader, 'form_params' => $this->getDeliveryData()]);
     }
 
-
-    /**
-     * {@inheritdoc}
-     */ 
-    private function getDeliveryData(): array {
-        $order = $this->shipment->getOrder();
-        $shippingAddress = $order->getShippingAddress();
-
-        $data = [
-            "deliveries" => [
-                "variableSymbol" => $order->getNumber(),
-                "value" => $order->getItemsTotal() / 100,
-                "valueCurrency" => "CZK",
-                "cod" => (int) round($order->getTotal() / 100), // Float for COD doesn't work
-                "codCurrency" => "CZK",
-                "packages" => [
-                    ["weight" => "30"]
-                ],
-                "agent" => $this->shippingGateway->getConfigValue('external_shipment_code'),
-                "deliveryType" => "BP",
-                "sender" => [
-                    "type" => "collectionPlace",
-                    "collectionPlace" => $this->shippingGateway->getConfigValue('collection_place')
-                ],
-                "recipient" =>  [
-                    "type" => "address",
-                    "firstname" => $shippingAddress->getFirstName(),
-                    "surname" => $shippingAddress->getLastName(),
-                    "phone" => $shippingAddress->getPhoneNumber(),
-                    "email" => $order->getCustomer()->getEmail(),
-                    "address" => [
-                        "street" => $shippingAddress->getStreet(),
-                        "state" => "CZ",
-                        "city" => $shippingAddress->getCity(),
-                        "postalCode" => $shippingAddress->getPostcode()
-                    ]
-                ]
-            ]
-        ];
-
-        return $data;
-    }
-
-
     /**
      * {@inheritdoc}
      */ 
@@ -159,5 +115,70 @@ final class BalikonosClient implements BalikonosClientInterface
      */ 
     public function getShippingLabel(): ?string {
 
+    }
+
+    /**
+     * Get delivery data for API request
+     * @return  array
+     */ 
+    private function getDeliveryData(): array {
+        $order = $this->shipment->getOrder();
+        $shippingAddress = $order->getShippingAddress();
+
+        $data = [
+            "deliveries" => [
+                "variableSymbol" => $order->getNumber(),
+                "value" => $order->getItemsTotal() / 100,
+                "valueCurrency" => "CZK",
+                "cod" => (int) round($order->getTotal() / 100), // Float for COD doesn't work
+                "codCurrency" => "CZK",
+                "packages" => [
+                    ["weight" => "30"]
+                ],
+                "agent" => $this->getDeliveryAgent(),
+                "deliveryType" => $this->getDeliveryType(),
+                "sender" => [
+                    "type" => "collectionPlace",
+                    "collectionPlace" => $this->shippingGateway->getConfigValue('collection_place')
+                ],
+                "recipient" =>  [
+                    "type" => "address",
+                    "firstname" => $shippingAddress->getFirstName(),
+                    "surname" => $shippingAddress->getLastName(),
+                    "phone" => $shippingAddress->getPhoneNumber(),
+                    "email" => $order->getCustomer()->getEmail(),
+                    "address" => [
+                        "street" => $shippingAddress->getStreet(),
+                        "state" => "CZ",
+                        "city" => $shippingAddress->getCity(),
+                        "postalCode" => $shippingAddress->getPostcode()
+                    ]
+                ]
+            ]
+        ];
+
+        return $data;
+    }
+
+    /**
+     * Get delivery agent code from gateway configuration
+     * @return string
+     */
+    private function getDeliveryAgent(): string {
+        $shipment = $this->shippingGateway->getConfigValue('external_shipment');
+        $agent = explode('-', $shipment)[0];
+
+        return $agent;
+    }
+
+    /**
+     * Get delivery code from gateway configuration
+     * @return string
+     */
+    private function getDeliveryType(): string {
+        $shipment = $this->shippingGateway->getConfigValue('external_shipment');
+        $code = explode('-', $shipment)[1];
+
+        return $code;
     }
 }
