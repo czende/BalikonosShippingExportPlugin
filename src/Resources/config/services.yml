@@ -1,7 +1,3 @@
-parameters:
-    czende.balikonos_sandbox: https://test.balikonos.cz
-    czende.balikonos_production: https://balikonos.cz
-
 services:
     czende.balikonos_shipping_export_plugin.form.type.balikonos_shipping_gateway:
         class: Czende\BalikonosShippingExportPlugin\Form\Type\ShippingGatewayType
@@ -16,4 +12,4 @@ services:
             - { name: kernel.event_listener, event: 'bitbag.export_shipment', method: exportShipment }
 
     czende.balikonos_shipping_export_plugin.api_client:
-        class: Czende\BalikonosShippingExportPlugin\Api\Client
+        class: Czende\BalikonosShippingExportPlugin\Api\BalikonosClient

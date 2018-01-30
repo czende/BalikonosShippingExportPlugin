@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Czende\BalikonosShippingExportPlugin\EventListener;
 
-use Czende\BalikonosShippingExportPlugin\Api\ClientInterface;
+use Czende\BalikonosShippingExportPlugin\Api\BalikonosClientInterface;
 use BitBag\ShippingExportPlugin\Event\ExportShipmentEvent;
 
 /**
@@ -12,13 +12,13 @@ use BitBag\ShippingExportPlugin\Event\ExportShipmentEvent;
  */
 final class ShippingExportEventListener {
 
-    /** @var ClientInterface */
+    /** @var BalikonosClientInterface */
     private $client;
 
     /**
-     * @param ClientInterface $client
+     * @param BalikonosClientInterface $client
      */
-    public function __construct(ClientInterface $client) {
+    public function __construct(BalikonosClientInterface $client) {
         $this->client = $client;
     }
 

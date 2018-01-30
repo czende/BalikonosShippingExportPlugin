@@ -13,7 +13,7 @@ use BitBag\ShippingExportPlugin\Entity\ShippingGatewayInterface;
 /**
  * @author Jan Czernin <jan.czernin@gmail.com>
  */
-interface ClientInterface
+interface BalikonosClientInterface
 {
     /**
      * Set shipping gateway.

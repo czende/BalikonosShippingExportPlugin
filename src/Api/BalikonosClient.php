@@ -15,13 +15,8 @@ use Webmozart\Assert\Assert;
 /**
  * @author Jan Czernin <jan.czernin@gmail.com>
  */
-final class Client implements ClientInterface
+final class BalikonosClient implements BalikonosClientInterface
 {
-    const METHOD_GET = 'GET';
-    const METHOD_POST = 'POST';
-    const METHOD_DELETE = 'DELETE';
-    const METHOD_PUT = 'PUT';
-
     const SANDBOX_URL = 'https://test.balikonos.cz';
     const PRODUCTION_URL = 'https://balikonos.cz';
     const TOKEN_ENDPOINT = '/connect/token/';
@@ -115,7 +110,7 @@ final class Client implements ClientInterface
 
         return $data;
     }
-    
+
 
     /**
      * {@inheritdoc}
