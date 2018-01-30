@@ -1,6 +1,6 @@
 czende:
     balikonos:
-        external_shipment_code: Externí kód přepravce
+        external_shipment_service: Externí přepravce
         environment: Prostředí
         sandbox: Testovací prostředí
         production: Produkční prostředí
