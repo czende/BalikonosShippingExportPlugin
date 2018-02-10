@@ -39,8 +39,7 @@ final class ShippingExportEventListener {
         $this->client->setShipment($shippingExport->getShipment());
 
         try {
-            $this->client->sendDelivery();
-            // $shippingLabel = $this->client->getShippingLabel();
+            $label = $this->client->sendDeliveryAndGetLabel();
         } catch (\Exception $exception) {
             $exportShipmentEvent->addErrorFlash(sprintf(
                 "Balikonos service for #%s order: %s",
@@ -50,8 +49,8 @@ final class ShippingExportEventListener {
             return;
         }
 
-        // $labelContent = base64_decode($shippingLabel->contents);
-        // $exportShipmentEvent->saveShippingLabel($labelContent, 'pdf'); // NEBO ZPL
+        $labelContent = base64_decode($label);
+        $exportShipmentEvent->saveShippingLabel($labelContent, 'pdf'); // NEBO ZPL?
         $exportShipmentEvent->addSuccessFlash();
         $exportShipmentEvent->exportShipment();
     }

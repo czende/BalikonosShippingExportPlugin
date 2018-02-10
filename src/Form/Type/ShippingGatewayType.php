@@ -35,6 +35,19 @@ final class ShippingGatewayType extends AbstractType
                      'IT Home Delivery' => 'IT-HD'
                 ]
             ])
+            // ->add('extra_services', ChoiceType::class, [
+            //     'label' => 'czende.balikonos.extra_services',
+            //     'required' => true,
+            //     'multiple'=> true,
+            //     'choices' => [
+            //          'SMS avizace před doručením zásilky' => 'sms_advice_unload',
+            //          'E-mail avizace před doručením zásilky' => 'email_advice_unload'
+            //     ]
+            // ])
+            ->add('default_weight', TextType::class, [
+                'label' => 'czende.balikonos.default_weight',
+                'required' => true
+            ])
             ->add('environment', ChoiceType::class, [
                 'label' => 'czende.balikonos.environment',
                 'required' => true,

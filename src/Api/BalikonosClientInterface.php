@@ -28,18 +28,7 @@ interface BalikonosClientInterface
     public function setShipment(ShipmentInterface $shipment): void;
 
     /**
-     * Send delivery to balikonos API
+     * Send delivery to balikonos API, complete and get label
      */
-    public function sendDelivery(): void;
-
-    /**
-     * Get develivery label for given shipping
-     * @return array
-     */
-    public function getShippingLabel(): ?string;
-
-    /**
-     * Complete delivery before generating shipping label
-     */
-    public function completeDelivery(): void;
+    public function sendDeliveryAndGetLabel(): ?string;
 }

@@ -1,6 +1,8 @@
 czende:
     balikonos:
         external_shipment_service: Externí přepravce
+        default_weight: Výchozí váha balíku (kg)
+        extra_services: Doplňkové služby
         environment: Prostředí
         sandbox: Testovací prostředí
         production: Produkční prostředí

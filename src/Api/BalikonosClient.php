@@ -49,23 +49,32 @@ final class BalikonosClient implements BalikonosClientInterface
     /**
      * {@inheritdoc}
      */
-    public function sendDelivery(): void {
-        $accessToken = $this->getAccessToken();
-
-        if (!$accessToken) return;
-
+    public function sendDeliveryAndGetLabel(): ?string {
         $gatewayConfig = [
             'uri' => ($this->shippingGateway->getConfigValue('environment') === 'production' ? self::PRODUCTION_URL : self::SANDBOX_URL)
         ];
         
         $requestHeader = [
-            'Accept' => 'application/x-www-form-urlencoded',
-            'Authorization' => 'Bearer ' . $accessToken,
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $this->getAccessToken(),
             'Content-Type' => 'application/x-www-form-urlencoded'
         ];
         
         $client = new GuzzleClient(['base_uri' => $gatewayConfig['uri']]);
-        $client->post(self::API_ENDPOINT . 'deliveries', ['headers' => $requestHeader, 'form_params' => $this->getDeliveryData()]);
+
+        // Send delivery
+        $response = $client->post(self::API_ENDPOINT . 'deliveries', ['headers' => $requestHeader, 'form_params' => $this->getDeliveryData()]);
+
+        // Complete delivery
+        $data = json_decode($response->getBody()->getContents());
+        $client->patch(self::API_ENDPOINT . 'deliveries', ['headers' => $requestHeader, 'form_params' => ["deliveries" => [["deliveryId" => $data->data[0]->deliveryId, "closed" => true]]]]);
+        
+        // Get delivery label
+        $ticket = $client->get(self::API_ENDPOINT . 'deliveries/tickets?deliveryId=' . $data->data[0]->deliveryId . '&position=1&printFormat=single', ['headers' => $requestHeader]);
+        $jsonTicket = json_decode($ticket->getBody()->getContents());
+        $label = $jsonTicket->data->contents;
+
+        return $label;
     }
 
     /**
@@ -104,20 +113,6 @@ final class BalikonosClient implements BalikonosClientInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function completeDelivery(): void {
-
-    }
-
-    /**
-     * {@inheritdoc}
-     */ 
-    public function getShippingLabel(): ?string {
-
-    }
-
-    /**
      * Get delivery data for API request
      * @return  array
      */ 
@@ -125,16 +120,12 @@ final class BalikonosClient implements BalikonosClientInterface
         $order = $this->shipment->getOrder();
         $shippingAddress = $order->getShippingAddress();
 
+        // Base delivery data
         $data = [
             "deliveries" => [
                 "variableSymbol" => $order->getNumber(),
-                "value" => $order->getItemsTotal() / 100,
+                "value" => ($order->getTotal() / 100),
                 "valueCurrency" => "CZK",
-                "cod" => (int) round($order->getTotal() / 100), // Float for COD doesn't work
-                "codCurrency" => "CZK",
-                "packages" => [
-                    ["weight" => "30"]
-                ],
                 "agent" => $this->getDeliveryAgent(),
                 "deliveryType" => $this->getDeliveryType(),
                 "sender" => [
@@ -153,9 +144,37 @@ final class BalikonosClient implements BalikonosClientInterface
                         "city" => $shippingAddress->getCity(),
                         "postalCode" => $shippingAddress->getPostcode()
                     ]
+                ],
+                "extraServices" => [
+                    [
+                        "code" => "email_advice_unload",
+                        "arguments" => [
+                            "email" => $order->getCustomer()->getEmail()
+                        ]
+                    ],
+                    [
+                        "code" => "sms_advice_unload",
+                        "arguments" => [
+                            "phone" => ($shippingAddress->getPhoneNumber() ? $shippingAddress->getPhoneNumber() : '')
+                        ]
+                    ]
                 ]
             ]
         ];
+
+        // Delivery packages
+        // foreach order->getItems()
+        $data["deliveries"]["packages"] = [
+            [
+                "weight" => $this->countItemsWeight($order)
+            ]
+        ];
+
+        // Delivery COD
+        if ($order->getPaymentState() !== 'paid') {
+            $data["deliveries"]["cod"] = (int) round($order->getTotal() / 100); // Float for COD doesn't work
+            $data["deliveries"]["codCurrency"] = "CZK";
+        }
 
         return $data;
     }
@@ -172,7 +191,7 @@ final class BalikonosClient implements BalikonosClientInterface
     }
 
     /**
-     * Get delivery code from gateway configuration
+     * Get delivery type code from gateway configuration
      * @return string
      */
     private function getDeliveryType(): string {
@@ -180,5 +199,26 @@ final class BalikonosClient implements BalikonosClientInterface
         $code = explode('-', $shipment)[1];
 
         return $code;
+    }
+
+    /**
+     * Count order items weight for required delivery field
+     *
+     * @param OrderInterface $order
+     * @return float
+     */
+    private function countItemsWeight(OrderInterface $order): float {
+        $count = 0.00;
+        foreach ($order->getItems() as $item) {
+            $weight = $item->getVariant()->getWeight();
+
+            if ($weight) {
+                $count += $weight;
+            } else {
+                $count += $this->shippingGateway->getConfigValue('default_weight');
+            }
+        }
+
+        return $count;
     }
 }
