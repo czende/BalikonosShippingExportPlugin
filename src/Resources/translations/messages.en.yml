@@ -1,6 +1,8 @@
 czende:
     balikonos:
         external_shipment_service: External shipment service
+        default_weight: Default package weight (kg)
+        extra_services: Extra services
         environment: Environment
         sandbox: Test environment
         production: Production environment
