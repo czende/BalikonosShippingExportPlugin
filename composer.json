@@ -9,6 +9,12 @@
             "email": "jan.czernin@gmail.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/czende/ShippingExportPlugin"
+        }
+    ],
     "require": {
         "php": "^7.1",
         "sylius/sylius": "dev-master",
